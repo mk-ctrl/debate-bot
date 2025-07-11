@@ -1,7 +1,9 @@
 import { InferenceClient } from "@huggingface/inference";
+import dotenv from "dotenv"
+dotenv.config();
 
 const debatJudge = async (arguement) =>{
-  const client = new InferenceClient('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');
+  const client = new InferenceClient(process.env.HF_TOKEN);
 
   const chatCompletion = await client.chatCompletion({
   provider: "featherless-ai",
