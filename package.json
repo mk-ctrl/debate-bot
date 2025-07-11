@@ -7,15 +7,19 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend": "node ./server/api.js"
   },
   "dependencies": {
     "@huggingface/inference": "^4.4.0",
     "@tailwindcss/vite": "^4.1.11",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.0",
+    "express": "^5.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "window": "^4.2.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

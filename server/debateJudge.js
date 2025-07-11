@@ -6,7 +6,7 @@ const debatJudge = async (arguement) =>{
   const client = new InferenceClient(process.env.HF_TOKEN);
 
   const chatCompletion = await client.chatCompletion({
-  provider: "featherless-ai",
+  provider: "auto",
   model: "Qwen/Qwen2-7B-Instruct",
   messages: [
     {
