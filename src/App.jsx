@@ -2,15 +2,15 @@ import React, { useState } from 'react'
 import debatJudge from '../bot/debateJudge.js';
 
 const App = () => {
-  const [input,setInput] = useState("");
-  const [result,setResult] = useState("")
+  // const [input,setInput] = useState("");
+  // const [result,setResult] = useState("")
 
-  const handleSubmit = async (e)=>{
-    e.preventDefault();
-    const r = await debatJudge(input);
-    setResult(r)
+  // const handleSubmit = async (e)=>{
+  //   e.preventDefault();
+  //   const r = await debatJudge(input);
+  //   setResult(r)
     
-  }
+  // }
 
 
 
@@ -23,7 +23,7 @@ const App = () => {
       <div>
       {result && <prev>{result}</prev>}
       </div> */}
-      naanga dhan
+      <h1>Naanfa dhan</h1>
 
     </div>
   )
