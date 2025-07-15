@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import userRoute from '../utitlities/route/user.route.js'
+import chatMessage from '../utitlities/route/chat.route.js'
 dotenv.config();
 import { connectDB } from '../utitlities/Database/connectDB.js';
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors({
 app.use(express.json())
 
 app.use('/user',userRoute)
+app.use('/chat',chatMessage)
 
 //port 
 app.listen(4476,()=> console.log("Server on PORT 4476"));
