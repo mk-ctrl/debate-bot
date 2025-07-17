@@ -2,7 +2,7 @@ import { InferenceClient } from "@huggingface/inference";
 import dotenv from 'dotenv';
 dotenv.config();
 
-const debateJudge = async (arguement) =>{
+const debateJudge = async (arg) =>{
   const client = new InferenceClient(process.env.HF_TOKEN);
 
   const chatCompletion = await client.chatCompletion({
@@ -25,7 +25,7 @@ Debate Topic:
 "AI should not be allowed to make decisions in life-or-death situations."
 
 Argument:
-${arguement}
+${arg}
 
 return Score=(Relevance*0.15+Logic*0.20+Fallacy*0.15+Clarity*0.10+Evidence*0.15+Persuasiveness*0.15+Originality*0.10).
       `,
@@ -35,5 +35,5 @@ return Score=(Relevance*0.15+Logic*0.20+Fallacy*0.15+Clarity*0.10+Evidence*0.15+
 
 return(chatCompletion.choices[0].message.content);
 }
-
+// debateJudge();
 export default debateJudge

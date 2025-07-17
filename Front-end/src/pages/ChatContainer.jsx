@@ -27,6 +27,7 @@ const MessageBubble = ({ message }) => {
 
 // --- Main Chat Container Component ---
 const ChatContainer = () => {
+  const [user,setUser] = useState("");
   // --- State Management ---
   // A ref to the message list container for auto-scrolling
   const messagesEndRef = useRef(null);
@@ -58,7 +59,7 @@ const ChatContainer = () => {
       sender: 'You',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-
+    
     //sending message to backend
     
 

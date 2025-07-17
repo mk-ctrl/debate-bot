@@ -11,6 +11,8 @@ const Signup = () => {
         e.preventDefault();
         try {
             const result = await axiosInstance.post('/user/checkUser',formData);
+            await localStorage.setItem("token",result.data.token);
+            // navigate('/')
             console.log(result.data);
             
         } catch (error) {

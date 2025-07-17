@@ -1,8 +1,8 @@
 import express from 'express';
 const router = express.Router();
 import debateJudge from '../controller/model.js';
-
-router.post('/message',
+import { auth } from '../middleware/auth.middle.js';
+router.post('/message',auth,
     async (req,res)=>{
         const {newMessage} = req.body;
         console.log(newMessage);
