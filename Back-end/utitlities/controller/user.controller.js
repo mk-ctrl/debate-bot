@@ -31,6 +31,7 @@ export const signUp = async (req,res)=>{
                 {expiresIn:process.env.JWT_EXPIRES_IN},
             );
             return res.status(200).json({
+                email:user.email,
                 message:"Account Creation Successful",
                 token
             })
@@ -52,7 +53,7 @@ export const signUp = async (req,res)=>{
 export const login = async (req,res)=>{
     try {
         const {email,password} = req.body;
-        console.log(email);
+        // console.log(email);
         const user = await createUser.findOne({email});
         if(user){
             const bcryptPass = await bcrypt.compare(password,user.password);
@@ -64,7 +65,8 @@ export const login = async (req,res)=>{
             );
                 res.status(200).json({
                     message:"Account Found, Logging In",
-                    token
+                    token,
+                    email:user.email
                 })
             }
             else{

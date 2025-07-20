@@ -1,22 +1,26 @@
 import React from 'react'
 import { useState } from 'react'
+import { toast } from 'react-toastify';
 import { axiosInstance } from '../axios/axio'
-
+import globalAuth from '../zustand/auth.zustand'
 const Signup = () => {
     const [formData, setFormData] = useState({
         email:"",
         password:""
     })
+    const signup = globalAuth((set)=> set.login);
     const handleSubmit = async (e)=>{
         e.preventDefault();
         try {
             const result = await axiosInstance.post('/user/checkUser',formData);
-            await localStorage.setItem("token",result.data.token);
+            toast.success(result.data.message);
+            await signup(result.data.email,result.data.token)
             // navigate('/')
             console.log(result.data);
             
         } catch (error) {
-            console.error(error)
+            const errorMessage = error.response?.data?.message || "Something went wrong!";
+                        toast.error(errorMessage);
         }
         
     }

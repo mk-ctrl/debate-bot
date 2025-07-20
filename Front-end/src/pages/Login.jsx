@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import globalAuth from '../zustand/auth.zustand';
 import { axiosInstance } from '../axios/axio'
 
 const Login = () => {
@@ -11,13 +11,16 @@ const Login = () => {
         email:"",
         password:""
     })
+    const login = globalAuth((set)=> set.login);
+    
     const handleSubmit = async (e)=>{
         e.preventDefault();
         try {
             console.log(formData)
             const result = await axiosInstance.post('/user/login',formData);
+            console.log(result.data.email);
             toast.success(result.data.message);
-            await localStorage.setItem("token",result.data.token);
+            await login(formData.email,result.data.token)
             nav('/chat')
             console.log(result.data.message);
             console.log(result.data.token)
@@ -82,7 +85,7 @@ const Login = () => {
         </form>
 
         <p className="text-sm text-center text-gray-500 mt-4">
-          Don't have an account? <a href="/signIn" className="text-blue-600 underline">SignUp</a>
+          Don't have an account? <a href="/" className="text-blue-600 underline">SignUp</a>
         </p>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import debateJudge from '../controller/model.js';
+import {Create_Room,JoinRoom} from '../controller/room.controller.js'
 import { auth } from '../middleware/auth.middle.js';
 router.post('/message',auth,
     async (req,res)=>{
@@ -17,5 +18,8 @@ router.post('/message',auth,
         
     }
 });
+router.post('/room-create',Create_Room);
+router.post('/room-join',JoinRoom);
+
 
 export default router

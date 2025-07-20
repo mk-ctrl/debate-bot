@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { axiosInstance } from '../axios/axio';
+import LogoutButton from '../assets/logoutButton';
+import globalAuth from '../zustand/auth.zustand';
 // --- Helper Component for Individual Chat Bubbles ---
 const MessageBubble = ({ message }) => {
   const { text, sender, timestamp } = message;
+  const email = globalAuth((set)=> set.email);
   // Determine if the message was sent by the current user or received
-  const isSent = sender === 'You';
+  const isSent = sender === email;
 
   // Dynamic classes for styling based on the sender
   const bubbleClasses = isSent
@@ -20,6 +23,9 @@ const MessageBubble = ({ message }) => {
         <p className={`text-xs mt-1 opacity-75 ${isSent ? 'text-right' : 'text-left'}`}>
           {timestamp}
         </p>
+        <p className={`text-xs mt-1 opacity-75 ${isSent ? 'text-right' : 'text-left'}`}>
+          Sent by {email}
+        </p>
       </div>
     </div>
   );
@@ -27,7 +33,8 @@ const MessageBubble = ({ message }) => {
 
 // --- Main Chat Container Component ---
 const ChatContainer = () => {
-  const [user,setUser] = useState("");
+  // const [user,setUser] = useState("");
+  const email = globalAuth((set)=> set.email);
   // --- State Management ---
   // A ref to the message list container for auto-scrolling
   const messagesEndRef = useRef(null);
@@ -56,13 +63,10 @@ const ChatContainer = () => {
     const messageToSend = {
       id: messages.length + 1,
       text: newMessage,
-      sender: 'You',
+      sender: email,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    
     //sending message to backend
-    
-
     // Add the new message to the state
     setMessages([...messages, messageToSend]);
     // Clear the input field
@@ -81,6 +85,7 @@ const ChatContainer = () => {
   return (
     // Main container with a modern, centered layout
     <div className="flex items-center justify-center h-screen bg-gray-100 p-4">
+      <LogoutButton/>
       <div className="flex flex-col w-full max-w-3xl h-[90vh] bg-white rounded-2xl shadow-2xl border border-gray-200">
         
         {/* --- Chat Header --- */}
