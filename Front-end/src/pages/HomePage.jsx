@@ -79,10 +79,13 @@ export default function HomePage() {
     })
     const handleJoin = async () => {
         if (roomData.roomCode.length === 6 && roomData.name.trim()) {
-            await join(roomData.roomCode,roomData.name,false)
+            // await join(roomData.roomCode,roomData.name,false)
             const result = await axiosInstance.post('/chat/room-join',roomData);
-            toast.success(result.data.message);
-            nav('/debate-room');
+            const {roomCode,user,host,message,username} = result.data
+            await join(roomCode,username,user)
+            
+            toast.success(message);
+            nav('/debate-space');
         } else {
             setError("Please enter your name and a 6-character room code.");
             toast.error("Failed to Join Room");

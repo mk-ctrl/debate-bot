@@ -1,23 +1,39 @@
-import {create} from 'zustand';
-import {persist} from 'zustand/middleware';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 const storeRoom = create(
-    persist(
-        (set)=>({
-            roomCode:null,
-            name:null,
-            score:null,
-            debateTopic:null,
-            isHost:null,
-            join : (roomCode,name,isHost)=>{
-                set({roomCode,name,isHost});
-            },
-            create : (roomCode,name,isHost=true)=>{
-                set({roomCode,name,isHost})
-            },
-            exit: ()=>{
-            }
-        })
-    )
+  persist(
+    (set) => ({
+      roomCode: null,
+      name: null,         // current user's name (host or participant)
+      score: null,
+      isHost: false,
+      topic: null,
+      users: [],
+      
+      join: (roomCode, currentUserName, users) => {
+        set({ roomCode, name: currentUserName, users });
+      },
+
+      create: (roomCode, hostName, topic, isHost = true) => {
+        set({ roomCode, name: hostName, topic, isHost, users: [hostName] });
+      },
+
+      exit: () => {
+        set({
+          roomCode: null,
+          name: null,
+          score: null,
+          isHost: false,
+          topic: null,
+          users: [],
+        });
+      },
+    }),
+    {
+      name: 'room-store', // key for localStorage
+    }
+  )
 );
+
 export default storeRoom;

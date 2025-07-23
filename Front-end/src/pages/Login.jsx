@@ -21,7 +21,7 @@ const Login = () => {
             console.log(result.data.email);
             toast.success(result.data.message);
             await login(formData.email,result.data.token)
-            nav('/chat')
+            nav('/room-join')
             console.log(result.data.message);
             console.log(result.data.token)
             

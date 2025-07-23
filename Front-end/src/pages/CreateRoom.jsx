@@ -39,7 +39,7 @@ const PageContainer = ({ children }) => (
 
 export default function CreateRoomPage() {
     const [roomData,setRoomData]= useState({
-        name:'',roomCode:''
+        name:'',roomCode:'',topic:''
     })
     const create = storeRoom((state)=>state.create);
     const nav = useNavigate();
@@ -51,10 +51,11 @@ export default function CreateRoomPage() {
         roomData.roomCode = generateRoomCode();
         console.log(roomData);
         if (roomData.roomCode.length === 6 && roomData.name.trim()) {
-                    await create(roomData.roomCode,roomData.name)
+                    await create(roomData.roomCode,roomData.name,roomData.topic)
                     const result = await axiosInstance.post('/chat/room-create',roomData);
+                    console.log(result);
                     toast.success(result.data.message);
-                    nav('/debate-room');
+                    nav('/debate-space');
                 } else {
                     toast.error("Failed to Join Room");
                 }
@@ -65,7 +66,7 @@ export default function CreateRoomPage() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Create a New Debate</h1>
             <div className="space-y-4">
                 <InputField value={roomData.name} onChange={(e) => setRoomData((prev)=>({...prev,name:e.target.value}))} placeholder="Your Name" maxLength="20" />
-                <InputField value={roomData.roomCode} onChange={(e) => setRoomData((prev)=>({...prev,roomCode:e.target.value.toUpperCase()}))} placeholder="Debate Topic" maxLength="100" />
+                <InputField value={roomData.topic} onChange={(e) => setRoomData((prev)=>({...prev,topic:e.target.value.toUpperCase()}))} placeholder="Debate Topic" maxLength="100" />
                 <PrimaryButton onClick={handleCreate} icon={PlusSquare}>Create & Join</PrimaryButton>
                 <PrimaryButton onClick={()=> nav('/room-join')} className="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-700 !text-gray-800 dark:!text-gray-200" icon={Home}>Want to Join?</PrimaryButton>
             </div>

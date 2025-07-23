@@ -9,6 +9,10 @@ const Room = new mongoose.Schema({
         type:String,
         required:true,
     },
+    topic:{
+        type:String,
+        
+    },
     users: {
         type:[String],
         default:[]
