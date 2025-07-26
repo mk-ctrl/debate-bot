@@ -8,7 +8,7 @@ import CreateRoomPage from './pages/CreateRoom';
 import Login from './pages/Login'
 import DashboardPage from './pages/dash';
 import HomePage from './pages/HomePage';
-import DebateRoom from './pages/DebateRoom';
+import ChatRoom from './pages/DebateRoom';
 const App = () => {
   return (
     <div>
@@ -32,7 +32,7 @@ const App = () => {
         }/>
         <Route path='/debate-space'element={
           <ProtectRoute>
-            <DebateRoom/>
+            <ChatRoom/>
           </ProtectRoute>
         }/>
         
