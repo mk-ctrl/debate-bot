@@ -4,6 +4,7 @@ import storeRoom from '../zustand/room.zustand';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { axiosInstance } from '../axios/axio';
+import LogoutButton from '../assets/logoutButton';
 
 const PrimaryButton = ({ children, onClick, className = '', icon: Icon, disabled = false }) => (
     <button
@@ -63,6 +64,7 @@ export default function CreateRoomPage() {
 
     return (
         <PageContainer>
+            <LogoutButton/>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Create a New Debate</h1>
             <div className="space-y-4">
                 <InputField value={roomData.name} onChange={(e) => setRoomData((prev)=>({...prev,name:e.target.value}))} placeholder="Your Name" maxLength="20" />

@@ -1,21 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import storeRoom from '../zustand/room.zustand';
 import { io } from "socket.io-client";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 const socket = io("http://localhost:4476");
 
-// A few initial messages to populate the chat
-const initialMessages = [
-    { id: 1, text: "Welcome to the debate! What's your take on AI's role in creative fields?", sender: 'Moderator', timestamp: '11:00 PM' },
-    { id: 2, text: "I think it's a powerful tool for artists, not a replacement.", sender: 'Alex', timestamp: '11:01 PM' },
-    { id: 3, text: "I'm not so sure. It feels like it could devalue human creativity.", sender: 'Sarah', timestamp: '11:02 PM' },
-];
+
 
 function ChatRoom() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null); // Ref for auto-scrolling
-  const {name} = storeRoom();
-
+  let {name,exit} = storeRoom();
+  const nav = useNavigate();
   // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -25,20 +22,20 @@ function ChatRoom() {
   useEffect(scrollToBottom, [messages]);
 
     useEffect(() => {
-  socket.on('connect', () => {
-    console.log("Connected to server");
-    socket.emit("adduser", name); // send username to server
-  });
+      socket.on('connect', () => {
+        console.log("Connected to server");
+        socket.emit("adduser", name); // send username to server
+      });
 
-  socket.on("message", ({ message, user }) => {
-    const newMessage = {
-      id: Date.now(),
-      text: message,
-      sender: user,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-    setMessages(prev => [...prev, newMessage]);
-  });
+      socket.on("message", ({ message, user }) => {
+        const newMessage = {
+          id: Date.now(),
+          text: message,
+          sender: user,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        };
+        setMessages(prev => [...prev, newMessage]);
+      });
 
   return () => {
     socket.off("connect");
@@ -54,6 +51,11 @@ function ChatRoom() {
   setNewMessage(''); // clear input field
 };
 
+  const handleLeave = ()=>{
+    exit();
+    nav('/room-join');
+    toast.success('Left Room');
+  }
 
     
 
@@ -64,6 +66,9 @@ function ChatRoom() {
         <div>
            <h1 className="text-xl font-bold text-blue-400">Debate Topic: AI in Creative Arts</h1>
            <p className="text-sm text-gray-400">Logged in as: <span className="font-semibold">{name}</span></p>
+        </div>
+        <div>
+          <button className="border rounded-sm p-2 bg-amber-300 hover:cursor-pointer hover:bg-red-800" onClick={handleLeave}>Leave Room</button>
         </div>
         
       </header>

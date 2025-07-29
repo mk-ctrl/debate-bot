@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, PlusSquare, Sun, Moon } from 'lucide-react';
 import storeRoom from '../zustand/room.zustand.js';
+import LogoutButton from '../assets/logoutButton';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../axios/axio.js';
+import Dropdown from '../assets/Dropdown.jsx';
 
 // =================================================================
 // --- Re-usable UI Components (Normally in a separate file) ---
@@ -69,7 +71,7 @@ const PageContainer = ({ children }) => (
 );
 
 
-export default function HomePage() {
+export default function RoomJoin() {
     const nav = useNavigate();
     const [error, setError] = useState('');
     const join = storeRoom((state)=>state.join);
@@ -94,6 +96,7 @@ export default function HomePage() {
 
     return (
         <PageContainer>
+            <LogoutButton></LogoutButton>
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Debate Platform</h1>
                 <ThemeToggle />
@@ -102,6 +105,7 @@ export default function HomePage() {
             <div className="space-y-4">
                 <InputField value={roomData.name } onChange={(e)=> setRoomData((prev)=>({...prev,name:e.target.value}))} placeholder="Enter Your Name" maxLength="20" />
                 <InputField value={roomData.roomCode } onChange={(e)=> setRoomData((prev)=>({...prev,roomCode:e.target.value.toUpperCase()}))} placeholder="Enter Room Code" maxLength="6" />
+                <Dropdown/>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <PrimaryButton onClick={handleJoin} icon={ArrowRight}>Join Room</PrimaryButton>
                 <PrimaryButton onClick={()=> nav('/room-create')} className="bg-gray-600 hover:bg-gray-700" icon={PlusSquare}>Create Room</PrimaryButton>

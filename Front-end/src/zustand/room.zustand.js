@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import {io} from 'socket.io-client'
 
 const storeRoom = create((
   persist(
@@ -11,14 +10,18 @@ const storeRoom = create((
       isHost: false,
       topic: null,
       OnlineUsers: [],
+      teamSide:null,
       
       join: (roomCode, currentUserName, users) => {
-        set({ roomCode, name: currentUserName, OnlineUsers:users });
+        set({ roomCode, name: currentUserName, OnlineUsers:users});
 
-        get().connectSocket()
+        // get().connectSocket()
       },
       create: (roomCode, hostName, topic, isHost = true) => {
         set({ roomCode, name: hostName, topic, isHost, OnlineUsers: [hostName] });
+      },
+      setTeam: (teamSide)=>{
+        set({teamSide});
       },
       exit: () => {
         set({
@@ -28,15 +31,10 @@ const storeRoom = create((
           isHost: false,
           topic: null,
           OnlineUsers: [],
+          teamSide:null
         });
       },
-      connectSocket: ()=>{
-        const socket = io("http://localhost:4476");
-        socket.connect();
-      },
-      disconnectSocket: ()=>{
 
-      }
     }),
     {
       name: 'room-store', // key for localStorage
