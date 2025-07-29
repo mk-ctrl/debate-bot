@@ -1,14 +1,17 @@
 import React from 'react'
 import { Routes,Route } from 'react-router-dom'
-import Signup from './pages/Signup'
+
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectRoute from './assets/protectedRoute/protectRoute';
+// #PAGES#
 import CreateRoomPage from './pages/CreateRoom';
+import Signup from './pages/Signup'
 import Login from './pages/Login'
 import DashboardPage from './pages/dash';
-import HomePage from './pages/HomePage';
+import RoomJoin from './pages/RoomJoin';
 import ChatRoom from './pages/DebateRoom';
+// #PAGES#
 const App = () => {
   return (
     <div>
@@ -22,7 +25,7 @@ const App = () => {
         }/>
         <Route path='/room-join'element={
           <ProtectRoute>
-            <HomePage/>
+            <RoomJoin/>
           </ProtectRoute>
         }/>
         <Route path='/room-create'element={
