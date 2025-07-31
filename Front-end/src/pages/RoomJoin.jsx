@@ -78,13 +78,17 @@ export default function RoomJoin() {
     const [roomData,setRoomData] = useState({
         name:'',
         roomCode:'',
+        side:''
     })
+    const {teamSide} = storeRoom();
+    roomData.side = teamSide;
     const handleJoin = async () => {
         if (roomData.roomCode.length === 6 && roomData.name.trim()) {
             // await join(roomData.roomCode,roomData.name,false)
             const result = await axiosInstance.post('/chat/room-join',roomData);
-            const {roomCode,user,host,message,username} = result.data
-            await join(roomCode,username,user)
+            const {roomCode,user,host,message,username,team_red,team_blue,topic} = result.data;
+            console.log(team_red,team_blue);
+            await join(roomCode,username,user,team_red,team_blue,topic)
             
             toast.success(message);
             nav('/debate-space');

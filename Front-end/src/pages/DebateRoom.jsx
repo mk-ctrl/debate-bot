@@ -11,37 +11,43 @@ function ChatRoom() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef(null); // Ref for auto-scrolling
-  let {name,exit} = storeRoom();
+  let {name,exit,teamSide,team_red,team_blue,topic,roomCode} = storeRoom();
   const nav = useNavigate();
   // Function to scroll to the bottom of the chat
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  
+ 
   // useEffect to scroll to bottom whenever messages change
   useEffect(scrollToBottom, [messages]);
 
     useEffect(() => {
-      socket.on('connect', () => {
-        console.log("Connected to server");
-        socket.emit("adduser", name); // send username to server
-      });
+  if (!name || !roomCode) return;
 
-      socket.on("message", ({ message, user }) => {
-        const newMessage = {
-          id: Date.now(),
-          text: message,
-          sender: user,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
-        setMessages(prev => [...prev, newMessage]);
-      });
+  // Connect and join room
+  socket.on('connect', () => {
+    console.log("Connected to server");
+    
+  });
+  //socket.emit("joinRoom", { username: name, room: roomCode });
+  // Listen for messages in the room
+  socket.on("message", ({ message, user }) => {
+    const newMessage = {
+      id: Date.now(),
+      text: message,
+      sender: user,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    setMessages(prev => [...prev, newMessage]);
+  });
 
+  // Cleanup listeners when component unmounts or rerenders
   return () => {
     socket.off("connect");
     socket.off("message");
   };
-}, []);
+}, [name, roomCode]);
+
 
    const handleSendMessage = (e) => {
   e.preventDefault();
@@ -64,7 +70,7 @@ function ChatRoom() {
       {/* Header */}
       <header className="bg-gray-800 shadow-md p-4 flex justify-between items-center">
         <div>
-           <h1 className="text-xl font-bold text-blue-400">Debate Topic: AI in Creative Arts</h1>
+           <h1 className="text-xl font-bold text-blue-400">{topic}</h1>
            <p className="text-sm text-gray-400">Logged in as: <span className="font-semibold">{name}</span></p>
         </div>
         <div>
@@ -79,7 +85,7 @@ function ChatRoom() {
           {messages.map((msg) => {
             const isMe = msg.sender === name;
             const isModerator = msg.sender === 'Moderator';
-            
+              const color = team_red.includes(msg.sender) ? 'bg-red-700': team_blue.includes(msg.sender) ? 'bg-blue-700' : 'bg-gray-600' 
             // Moderator Message Style
             if(isModerator) {
               return (
@@ -92,10 +98,10 @@ function ChatRoom() {
             // User Message Style
             return (
               <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-lg lg:max-w-xl px-4 py-2 rounded-lg ${isMe ? 'bg-blue-600' : 'bg-gray-700'}`}>
+                <div className={`max-w-lg lg:max-w-xl px-4 py-2 rounded-lg ${color}`}>
                   {!isMe && <p className="text-xs text-gray-400 font-bold">{msg.sender}</p>}
                   <p className="text-white">{msg.text}</p>
-                  <p className={`text-xs text-right mt-1 ${isMe ? 'text-blue-200' : 'text-gray-400'}`}>{msg.timestamp}</p>
+                  <p className={`text-xs text-right mt-1 ${color}`}>{msg.timestamp}</p>
                 </div>
               </div>
             );

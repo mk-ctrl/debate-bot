@@ -27,8 +27,8 @@ export default function DropDown() {
           style={{color:'white'}}
           onChange={handleChange}
         >
-          <MenuItem value={'red'} style={{color:'red'}}>Red</MenuItem>
-          <MenuItem value={'blue'} style={{color:'blue'}}>Blue</MenuItem>
+          <MenuItem value={'bg-red-700'} style={{color:'red'}}>Red</MenuItem>
+          <MenuItem value={'bg-blue-700'} style={{color:'blue'}}>Blue</MenuItem>
         </Select>
       </FormControl>
     </Box>

@@ -34,7 +34,7 @@ export const Create_Room = async (req,res)=>{
 
 export const JoinRoom = async (req,res)=>{
     try {
-        const {name,roomCode} = req.body;
+        const {name,roomCode,side} = req.body;
         console.log(roomCode);
         const newRoom = await createRoom.findOne({code:roomCode});
         
@@ -44,14 +44,18 @@ export const JoinRoom = async (req,res)=>{
             })
         }
         newRoom.users.push(name);
+        if(side === 'bg-red-700') newRoom.team_red.push(name);
+        else newRoom.team_blue.push(name);
         await newRoom.save(); 
         res.status(200).json({
             message:"Room Found,Entering Debate",
-            user:newRoom.users,
+                user:newRoom.users,
                 topic:newRoom.topic,
                 host:newRoom.host,
                 username:name,
-                roomCode:newRoom.code
+                roomCode:newRoom.code,
+                team_red:newRoom.team_red,
+                team_blue:newRoom.team_blue
         })
         
     } catch (error) {

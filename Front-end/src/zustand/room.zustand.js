@@ -11,9 +11,11 @@ const storeRoom = create((
       topic: null,
       OnlineUsers: [],
       teamSide:null,
+      team_red:[],
+      team_blue:[],
       
-      join: (roomCode, currentUserName, users) => {
-        set({ roomCode, name: currentUserName, OnlineUsers:users});
+      join: (roomCode, currentUserName, users,team_red,team_blue,topic) => {
+        set({ roomCode, name: currentUserName, OnlineUsers:users,team_red,team_blue,topic});
 
         // get().connectSocket()
       },

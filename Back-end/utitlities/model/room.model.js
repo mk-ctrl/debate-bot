@@ -16,7 +16,15 @@ const Room = new mongoose.Schema({
     users: {
         type:[String],
         default:[]
-    }
+    },
+    team_red:{
+        type:[String],
+        default:[]
+    },
+    team_blue:{
+        type:[String],
+        default:[]
+    },
 },
 {timestamps:true});
 
