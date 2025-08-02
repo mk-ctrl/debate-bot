@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import DashboardPage from './pages/dash';
 import RoomJoin from './pages/RoomJoin';
 import ChatRoom from './pages/DebateRoom';
+import NewDebate from './pages/NewDebate';
 // #PAGES#
 const App = () => {
   return (
@@ -35,7 +36,8 @@ const App = () => {
         }/>
         <Route path='/debate-space'element={
           <ProtectRoute>
-            <ChatRoom/>
+            {/* <ChatRoom/> */}
+            <NewDebate/>
           </ProtectRoute>
         }/>
         

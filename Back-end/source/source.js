@@ -34,6 +34,7 @@ io.on("connection",socket =>{
     });
 
     socket.on("message",message =>{
+        console.log(message);
         io.sockets.emit("message",{
             message, user:socket.user, id: socket.id
         })
