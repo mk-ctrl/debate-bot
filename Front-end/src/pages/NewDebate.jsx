@@ -3,7 +3,9 @@ import storeRoom from '../zustand/room.zustand';
 import { io } from "socket.io-client";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { axiosInstance } from '../axios/axio'
 const socket = io("http://localhost:4476");
+
 // A mock socket object to simulate the API
 
 // --- END MOCK SETUP ---
@@ -12,14 +14,13 @@ const socket = io("http://localhost:4476");
 // This data provides the structure for the UI that isn't covered by the real-time messages.
 const initialData = {
     pinnedMessage: "A key argument about job displacement has been raised by Team AGAINST.",
-    participants: [
-        { id: 1, name: 'Alex Ray', role: 'Moderator', avatar: 'M', avatarColor: '7c3aed' },
-        { id: 2, name: 'Sarah Jones', role: 'Debater', team: 'Red', isSpeaking: true, avatar: 'S', avatarColor: '16a34a' },
-        { id: 3, name: 'Ben Carter', role: 'Debater', team: 'Red', isSpeaking: false, avatar: 'B', avatarColor: '16a34a' },
-        { id: 4, name: 'David Chen', role: 'Debater', team: 'Blue', isSpeaking: false, avatar: 'D', avatarColor: 'dc2626' },
-        { id: 5, name: 'Emily Rodriguez', role: 'Debater', team: 'Blue', isSpeaking: false, avatar: 'E', avatarColor: 'dc2626' },
-        ...Array.from({ length: 10 }, (_, i) => ({ id: i + 6, name: `User ${i + 1}`, role: 'Audience', avatar: 'U', avatarColor: '6b7280' }))
-    ],
+    // participants: [
+    //     { id: 1, name: 'Alex Ray', role: 'Moderator', avatar: 'M', avatarColor: '7c3aed' },
+    //     { id: 2, name: 'Sarah Jones', role: 'Debater', team: 'Red', isSpeaking: true, avatar: 'S', avatarColor: '16a34a' },
+    //     { id: 3, name: 'Ben Carter', role: 'Debater', team: 'Red', isSpeaking: false, avatar: 'B', avatarColor: '16a34a' },
+    //     { id: 4, name: 'David Chen', role: 'Debater', team: 'Blue', isSpeaking: false, avatar: 'D', avatarColor: 'dc2626' },
+    //     { id: 5, name: 'Emily Rodriguez', role: 'Debater', team: 'Blue', isSpeaking: false, avatar: 'E', avatarColor: 'dc2626' },
+    // ],
     polls: [
         { id: 1, question: "Who made a stronger opening statement?", options: [{ text: "Team FOR", votes: 35 }, { text: "Team AGAINST", votes: 65 }], status: 'Closed' },
         { id: 2, question: "Is AI a net positive for job creation?", options: [{ text: "Yes", votes: 40 }, { text: "No", votes: 50 }, { text: "Unsure", votes: 10 }], status: 'Live' }
@@ -48,7 +49,7 @@ const Sidebar = ({ topic, participants, onLeave }) => {
     const moderator = participants.find(p => p.role === 'Moderator');
     const teamFor = participants.filter(p => p.team === 'Red');
     const teamAgainst = participants.filter(p => p.team === 'Blue');
-    const audience = participants.filter(p => p.role === 'Audience');
+   
 
     return (
         <aside className="w-full md:w-1/4 xl:w-1/5 bg-gray-800/50 p-4 flex flex-col space-y-4 overflow-y-auto border-r border-gray-700 h-screen">
@@ -71,7 +72,7 @@ const Sidebar = ({ topic, participants, onLeave }) => {
                 <ParticipantSection title="Moderator" participants={[moderator]} color="purple-400" />
                 <ParticipantSection title="Team Red" participants={teamFor} color="green-400" />
                 <ParticipantSection title="Team Blue" participants={teamAgainst} color="red-400" />
-                <div>
+                {/* <div>
                     <h3 className="text-sm font-bold text-gray-400 uppercase mb-2">Audience ({audience.length})</h3>
                     <div className="flex flex-wrap gap-2">
                         {audience.slice(0, 3).map(p => <ParticipantAvatar key={p.id} participant={p} size="w-8 h-8" />)}
@@ -81,7 +82,7 @@ const Sidebar = ({ topic, participants, onLeave }) => {
                             </div>
                         )}
                     </div>
-                </div>
+                </div> */}
             </div>
         </aside>
     );
@@ -101,12 +102,12 @@ const ParticipantItem = ({ participant }) => (
         <ParticipantAvatar participant={participant} size="w-8 h-8" />
         <div className="flex-grow">
             <span className="font-medium text-white">{participant.name}</span>
-            {participant.isSpeaking && (
-                <div className="text-xs text-green-400 font-semibold flex items-center">
-                    <Icon path="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m12 7.5v-1.5a6 6 0 00-6-6.75m-6 6.75a6 6 0 016-6.75m6 6.75v-1.5m-12 7.5v-1.5" className="w-4 h-4 mr-2 animate-pulse" />
-                    Speaking...
-                </div>
-            )}
+            {/* {participant.isSpeaking && (
+                // <div className="text-xs text-green-400 font-semibold flex items-center">
+                //     <Icon path="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m12 7.5v-1.5a6 6 0 00-6-6.75m-6 6.75a6 6 0 016-6.75m6 6.75v-1.5m-12 7.5v-1.5" className="w-4 h-4 mr-2 animate-pulse" />
+                //     Speaking...
+                // </div>
+            )} */}
         </div>
     </li>
 );
@@ -122,22 +123,24 @@ const ParticipantAvatar = ({ participant, size }) => (
 
 const MainContent = ({ messages, pinnedMessage, onSendMessage, currentUser, teamBlue, teamRed }) => {
     const messagesEndRef = useRef(null);
-
+    // console.log("teamBlue",teamBlue);
+    // console.log("teamRed",teamRed);
+    // console.log("currentUser",currentUser);
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
     return (
         <main className="flex-1 flex flex-col bg-gray-900 h-screen">
-            <div className="bg-blue-900/50 border-b border-blue-700 p-3 text-center text-sm sticky top-0 z-10">
+            {/* <div className="bg-blue-900/50 border-b border-blue-700 p-3 text-center text-sm sticky top-0 z-10">
                 <Icon path="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zm-7.518-.267A8.25 8.25 0 1120.25 10.5M8.288 14.212A5.25 5.25 0 1117.25 10.5" className="w-5 h-5 inline-block mr-2 text-blue-400" />
                 <span className="font-semibold text-white">PINNED:</span> {pinnedMessage}
-            </div>
+            </div> */}
 
             <div id="message-container" className="flex-1 p-4 space-y-6 overflow-y-auto">
                 <div className="text-center text-xs text-gray-400 uppercase">Today</div>
                 {messages.map(msg => (
-                    <Message key={msg.id} message={msg} currentUser={currentUser} teamBlue={teamBlue} teamRed={teamRed} />
+                    <Message key={msg.id} message={msg} User={currentUser} teamBlue={teamBlue} teamRed={teamRed} />
                 ))}
                 <div ref={messagesEndRef} />
             </div>
@@ -147,10 +150,11 @@ const MainContent = ({ messages, pinnedMessage, onSendMessage, currentUser, team
     );
 };
 
-const Message = ({ message, currentUser, teamBlue, teamRed }) => {
-    const isMe = message.sender === currentUser;
+const Message = ({ message, User, teamBlue, teamRed }) => {
+    const isMe = message.sender === User;
     const isModerator = message.sender === 'Moderator';
-    
+    // console.log("message is",message);
+    // console.log("sender is",message.sender);
     if (isModerator) {
         return (
             <div className="text-center my-2">
@@ -301,82 +305,128 @@ const EvidenceTab = ({ evidence }) => (
 
 // --- Main App Component ---
 export default function NewDebate() {
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-    const {roomCode,name,topic,OnlineUsers,teamSide,team_red,team_blue,exit} = storeRoom();
-    const nav = useNavigate();
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const { roomCode, name, topic, OnlineUsers, teamSide, team_red, team_blue, exit } = storeRoom();
+  const nav = useNavigate();
 
-    // This data would likely come from your Zustand store or an API call in a real app.
-    // For this demo, we use the static initialData object defined above.
-    const { participants, pinnedMessage, polls, questions, evidence } = initialData;
+  // Build participants from team_red + team_blue (keeps your requested source)
+  const participants = [
+    ...team_red.map((n, i) => ({
+      id: `r-${i}-${n}`,
+      name: n,
+      team: 'Red',
+      avatar: n[0]?.toUpperCase() || '?',
+      avatarColor: '16a34a',
+      isSpeaking: false
+    })),
+    ...team_blue.map((n, i) => ({
+      id: `b-${i}-${n}`,
+      name: n,
+      team: 'Blue',
+      avatar: n[0]?.toUpperCase() || '?',
+      avatarColor: 'dc2626',
+      isSpeaking: false
+    }))
+  ];
 
-    useEffect(() => {
-        if (!name || !roomCode) return;
+  const { pinnedMessage, polls, questions, evidence } = initialData;
 
-        socket.on('connect', () => {
-            console.log("Connected to server");
-            socket.emit("adduser", name);
-        });
+  // message socket listeners (kept)
+  useEffect(() => {
+    if (!name || !roomCode) return;
 
-        socket.on("message", (incoming) => {
-            console.log(incoming.id);
-        const newMessage = {
-            id: incoming.id ?? Date.now() + Math.random(),
-            text: incoming.text ?? incoming.message ?? '',
-            sender: incoming.sender ?? incoming.user ?? 'Unknown',
-            timestamp: incoming.timestamp ?? new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        };
+    socket.on('connect', () => {
+      console.log("Connected to socket server");
+      socket.emit("adduser", name);
+    });
 
-    setMessages(prev => [...prev, newMessage]);
-});
+    socket.on("message", (incoming) => {
+      const newMessage = {
+        id: incoming.id ?? Date.now() + Math.random(),
+        text: incoming.message ?? incoming.msg ?? '',
+        sender: incoming.user ?? incoming.user ?? 'Unknown',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages(prev => [...prev, newMessage]);
+    });
 
+    return () => {
+      socket.off("connect");
+      socket.off("message");
+    };
+  }, [name, roomCode]);
 
-        return () => {
-            socket.off("connect");
-            socket.off("message");
-        };
-    }, [name, roomCode]);
-    
-    const handleSendMessage = (text) => {
-        if (text.trim() === '') return;
-        // In a real app, you'd emit to the server. The server would then broadcast
-        // the message back to all clients, and the `socket.on('message')` listener
-        // would handle adding it to the UI.
-        // socket.emit("message", { message: text, user: name });
+  // room-updated listener & join-room emit
+  useEffect(() => {
+    if (!name || !roomCode) return;
 
-        // For this self-contained demo, we'll add the message directly to the state
-        // to simulate the real-time effect.
-        socket.emit("message", text); // only emit to server
-        setNewMessage('')
+    // Tell server to add this socket to the socket.io room
+    socket.emit('join-room', { roomCode, username: name });
+
+    const handleRoomUpdated = (room) => {
+      console.log('room-updated received', room);
+      // update zustand from server authoritative room
+      storeRoom.getState().setRoomFromServer(room);
+      // optional: update messages or UI if needed
     };
 
-    const handleLeave = () => {
-        exit();
-        nav('/room-join');
-        toast.success('Left Room');
+    socket.on('room-updated', handleRoomUpdated);
+
+    return () => {
+      socket.off('room-updated', handleRoomUpdated);
+      // leave room on cleanup
+      socket.emit('leave-room', { roomCode, username: name });
     };
-//     
+  }, [name, roomCode]);
 
-    
+  const handleSendMessage = (text) => {
+    if (text.trim() === '') return;
+    socket.emit("message", { msg: text, user: name });
+    setNewMessage('');
+  };
 
-    return (
-        <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#111827", color: "#d1d5db" }} className="antialiased">
-            <div className="flex flex-col md:flex-row w-full bg-gray-900 text-gray-300">
-                <Sidebar topic={topic} participants={participants} onLeave={handleLeave} />
-                <MainContent 
-                    messages={messages} 
-                    pinnedMessage={pinnedMessage} 
-                    onSendMessage={handleSendMessage}
-                    currentUser={name}
-                    teamBlue={team_blue}
-                    teamRed={team_red}
-                />
-                <RightPanel 
-                    polls={polls} 
-                    questions={questions} 
-                    evidence={evidence} 
-                />
-            </div>
-        </div>
-    );
+  const handleLeave = async () => {
+    try {
+      const res = await axiosInstance.post('/chat/room-exit', { roomCode, username: name });
+      const updatedRoom = res.data.room;
+
+      // update local store with authoritative server state
+      if (updatedRoom) {
+        storeRoom.getState().setRoomFromServer(updatedRoom);
+      }
+
+      // local cleanup
+      exit();
+      nav('/room-join');
+      toast.success('Left Room');
+    } catch (err) {
+      console.error('Leave error', err);
+      toast.error('Could not leave room');
+      // optionally still nav:
+      exit();
+      nav('/room-join');
+    }
+  };
+
+  return (
+    <div style={{ fontFamily: "'Inter', sans-serif", backgroundColor: "#111827", color: "#d1d5db" }} className="antialiased">
+      <div className="flex flex-col md:flex-row w-full bg-gray-900 text-gray-300">
+        <Sidebar topic={topic} participants={participants} onLeave={handleLeave} />
+        <MainContent
+          messages={messages}
+          pinnedMessage={pinnedMessage}
+          onSendMessage={handleSendMessage}
+          currentUser={name}
+          teamBlue={team_blue}
+          teamRed={team_red}
+        />
+        <RightPanel
+          polls={polls}
+          questions={questions}
+          evidence={evidence}
+        />
+      </div>
+    </div>
+  );
 }
